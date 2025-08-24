@@ -1,0 +1,15 @@
+#helloSection {
+	display: none;
+}
+
+#helloSection.show {
+	display: block;
+}
+
+#inputSection {
+	display: none;
+}
+
+#inputSection.show {
+	display: block;
+}
