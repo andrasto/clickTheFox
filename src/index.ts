@@ -1,9 +1,11 @@
-import { fetchCatImages, fetchFoxImageUrl } from './requests';
+import { fetchCatImages, fetchFoxImageUrl, fetchDogImages } from './requests';
 
 const playerNameInput = <HTMLInputElement>getById('playerName');
 const playButton = <HTMLButtonElement>getById('playButton');
-const MAX = 5;
+const MAX = 9;
 let loaded = 0;
+let playerScore = 0;
+let timeLeft = 30;
 
 const images = [];
 
@@ -17,10 +19,10 @@ function preloadImages() {
 	images.push(foxImg);
 	fetchFoxImageUrl().then((v) => {
 		foxImg.src = v;
-		foxImg.id = 'Fox';
 		foxImg.onload = () => {
 			handleImageLoad();
 		};
+		foxImg.onclick = () => imageClick(1);
 	});
 
 	const catImages = [
@@ -30,23 +32,58 @@ function preloadImages() {
 		new Image(200, 200),
 	];
 	fetchCatImages().then((v) => {
-		console.log(v);
 		catImages.forEach((img, idx) => {
 			img.src = v[idx];
 			img.onload = () => {
 				handleImageLoad();
 			};
+			img.onclick = () => imageClick(-1);
+			addToImages(img);
 		});
 	});
-	images.push(...catImages);
+
+	const dogImages = [
+		new Image(200, 200),
+		new Image(200, 200),
+		new Image(200, 200),
+		new Image(200, 200),
+	];
+	fetchDogImages().then((v) => {
+		dogImages.forEach((img, idx) => {
+			img.src = v[idx];
+			img.onload = () => {
+				handleImageLoad();
+			};
+			img.onclick = () => imageClick(-1);
+
+			addToImages(img);
+		});
+	});
 }
 
 function handleImageLoad() {
 	++loaded;
 	if (loaded === MAX) {
 		const gameBox = getById('gameBox');
-		images.forEach((img) => gameBox.appendChild(img));
+		images.forEach((img) => {
+			img.ondragstart = () => false;
+			gameBox.appendChild(img);
+		});
 		loaded = 0;
+	}
+}
+
+function imageClick(increment: 1 | -1) {
+	playerScore += increment;
+	getById('playerScore').innerText = playerScore.toString();
+}
+
+function addToImages(img) {
+	const random = Math.floor(Math.random() * 100);
+	if (random < 50) {
+		images.unshift(img);
+	} else {
+		images.push(img);
 	}
 }
 
