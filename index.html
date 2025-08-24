@@ -3,12 +3,12 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="public/style.css" />
 		<title>Click the Fox! Game</title>
 	</head>
 	<body>
 		<h1>Click the Fox! Game</h1>
-		<div id="start-screen">
+		<div id="startScreen">
 			<div id="inputSection" class="show">
 				<span>Name: </span>
 				<input id="playerName" name="name" type="text" />
@@ -21,6 +21,19 @@
 				<button type="submit" id="playButton" disabled>Play!</button>
 			</div>
 		</div>
+		<div id="gameScreen">
+			<div id="gameHeader">
+				<div id="scoreSection">
+					<span>Score: </span>
+					<span id="playerScore">0</span>
+				</div>
+				<div id="timerSection">
+					<span>Time left: </span>
+					<span id="timeLeft"></span>
+				</div>
+			</div>
+			<div id="gameBox"></div>
+		</div>
 	</body>
-	<script src="out/index.js"></script>
+	<script src="dist/index.js" type="module"></script>
 </html>

@@ -13,3 +13,13 @@
 #inputSection.show {
 	display: block;
 }
+
+#gameBox {
+	display: block;
+	width: 600px;
+	height: 600px;
+}
+
+#gameBox > img {
+	cursor: pointer;
+}
