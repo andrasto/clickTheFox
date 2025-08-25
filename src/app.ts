@@ -1,12 +1,12 @@
 import { TIMER_IN_SEC } from './configs';
-import { PlayerStats } from './types';
-import { getById, getFormattedDate, wait } from './utils';
-
-interface FetchApis {
-	cat: () => Promise<string[]>;
-	dog: () => Promise<string[]>;
-	fox: () => Promise<string>;
-}
+import { FetchApis, PlayerStats } from './types';
+import {
+	getById,
+	getFormattedDate,
+	getRankings,
+	modifyElementVisibility,
+	wait,
+} from './utils';
 
 export class ClickTheFox {
 	public constructor(fetchApis: FetchApis) {
@@ -25,32 +25,44 @@ export class ClickTheFox {
 
 	private readonly playerNameInput = <HTMLInputElement>getById('playerName');
 	private readonly playButton = <HTMLButtonElement>getById('playButton');
-	private readonly gameBox = getById('gameBox');
 
 	private init = () => {
 		this.preloadImages();
-		this.playerNameInput.onchange = this.onPlayerNameChange;
-		getById('helloPlayerName').onclick = this.onPlayerNameClick;
 		this.playButton.onclick = this.startGame;
+		this.playerNameInput.onblur = this.onPlayerNameChange;
+		getById('helloPlayerName').onclick = this.onPlayerNameClick;
 		getById('toWelcomeScreen').onclick = this.toWelcomeScreen;
 	};
 
 	private startGame = () => {
-		getById('helloSection').classList.remove('show');
-		getById('inputSection').classList.remove('show');
-		getById('scoreboard').classList.remove('show');
+		modifyElementVisibility(
+			[getById('gameScreen')],
+			[
+				getById('helloSection'),
+				getById('scoreboard'),
+				getById('toWelcomeScreen'),
+				this.playButton,
+			]
+		);
 		getById('footerActions').classList.remove('spaceBetween');
-		this.playButton.classList.remove('show');
-		getById('toWelcomeScreen').classList.remove('show');
-		getById('gameScreen').classList.add('show');
-		this.canClick = true;
-		this.playerScore = 0;
-		this.timeLeft = TIMER_IN_SEC;
+
+		this.resetState();
 		this.loaderTransition();
 		this.handleImageLoad();
 		this.preloadImages();
+
+		this.setTimer();
+	};
+
+	private resetState = () => {
+		this.canClick = true;
+		this.playerScore = 0;
+		this.timeLeft = TIMER_IN_SEC;
 		getById('playerScore').innerText = this.playerScore.toString();
 		getById('timeLeft').innerText = this.timeLeft.toString();
+	};
+
+	private setTimer = () => {
 		this.timer = setInterval(() => {
 			this.timeLeft -= 1;
 			getById('timeLeft').innerText = this.timeLeft.toString();
@@ -62,27 +74,30 @@ export class ClickTheFox {
 	};
 
 	private endGame = () => {
-		getById('helloSection').classList.remove('show');
-		getById('inputSection').classList.remove('show');
-		getById('gameScreen').classList.remove('show');
-		getById('scoreboard').classList.add('show');
+		modifyElementVisibility(
+			[
+				getById('scoreboard'),
+				this.playButton,
+				getById('toWelcomeScreen'),
+			],
+			[getById('gameScreen')]
+		);
 		getById('footerActions').classList.add('spaceBetween');
 		const playerStats = {
 			name: this.playerNameInput.value,
 			date: getFormattedDate(new Date()),
 			score: this.playerScore,
 		};
-		const rankings = this.getRankings(playerStats);
+		const rankings = getRankings(playerStats);
 		this.renderRankings(rankings);
-		this.playButton.classList.add('show');
-		getById('toWelcomeScreen').classList.add('show');
 	};
 
 	private toWelcomeScreen = () => {
-		getById('scoreboard').classList.remove('show');
-		getById('helloSection').classList.add('show');
+		modifyElementVisibility(
+			[getById('helloSection')],
+			[getById('scoreboard'), getById('toWelcomeScreen')]
+		);
 		getById('footerActions').classList.remove('spaceBetween');
-		getById('toWelcomeScreen').classList.remove('show');
 	};
 
 	private renderRankings = (rankings: PlayerStats[]) => {
@@ -140,13 +155,13 @@ export class ClickTheFox {
 		getById('loader').classList.remove('show');
 		this.imagesToRender.forEach((img) => {
 			img.ondragstart = () => false;
-			this.gameBox.appendChild(img);
+			getById('gameBox').appendChild(img);
 		});
 		this.canClick = true;
 	};
 
 	private loaderTransition = () => {
-		this.gameBox.replaceChildren();
+		getById('gameBox').replaceChildren();
 		getById('loader').classList.add('show');
 	};
 
@@ -175,45 +190,25 @@ export class ClickTheFox {
 		}
 	};
 
-	private getRankings = (currentPlayerStats: PlayerStats) => {
-		const rankings = <PlayerStats[] | null>(
-			JSON.parse(localStorage.getItem('rankings'))
-		);
-
-		if (!rankings) {
-			localStorage.setItem(
-				'rankings',
-				JSON.stringify([currentPlayerStats])
-			);
-			return [currentPlayerStats];
-		}
-
-		rankings.push(currentPlayerStats);
-		const sorted = rankings.sort((a, b) => b.score - a.score);
-		sorted.splice(7);
-		localStorage.setItem('rankings', JSON.stringify(sorted));
-		return sorted;
-	};
-
 	private onPlayerNameChange = () => {
 		const playerName = this.playerNameInput.value;
 
 		if (playerName) {
 			this.playButton.disabled = false;
 			getById('helloPlayerName').innerText = playerName;
-			getById('helloSection').classList.add('show');
-			getById('inputSection').classList.remove('show');
-			getById('gameScreen').classList.remove('show');
-			getById('scoreboard').classList.remove('show');
+			modifyElementVisibility(
+				[getById('helloSection')],
+				[getById('inputSection')]
+			);
 		} else {
 			this.playButton.disabled = true;
 		}
 	};
 
 	private onPlayerNameClick = () => {
-		getById('inputSection').classList.add('show');
-		getById('helloSection').classList.remove('show');
-		getById('gameScreen').classList.remove('show');
-		getById('scoreboard').classList.remove('show');
+		modifyElementVisibility(
+			[getById('inputSection')],
+			[getById('helloSection')]
+		);
 	};
 }
