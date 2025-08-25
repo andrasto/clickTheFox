@@ -7,13 +7,13 @@ export async function fetchFoxImageUrl() {
 	return data.image;
 }
 
-export async function fetchCatImages() {
+export async function fetchCatImageUrls() {
 	const res = await fetch(URLS.cats);
 	const data: CatsResponse = await res.json();
 	return data.map((img) => img.url);
 }
 
-export async function fetchDogImages() {
+export async function fetchDogImageUrls() {
 	const res = await fetch(URLS.dogs);
 	const data: DogsResponse = await res.json();
 	return data.message;

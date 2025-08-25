@@ -1,4 +1,8 @@
-import { fetchCatImages, fetchFoxImageUrl, fetchDogImages } from './requests';
+import {
+	fetchCatImageUrls,
+	fetchFoxImageUrl,
+	fetchDogImageUrls,
+} from './requests';
 import { PlayerStats } from './types';
 
 const playerNameInput = <HTMLInputElement>getById('playerName');
@@ -7,7 +11,7 @@ const MAX = 9;
 let loaded = 0;
 let playerScore = 0;
 let timeLeft = 5;
-let timer;
+let timer: NodeJS.Timeout;
 
 const images = [];
 const preloadedImages = [];
@@ -84,7 +88,7 @@ function getRankings(currentPlayerStats: PlayerStats) {
 
 	rankings.push(currentPlayerStats);
 	localStorage.setItem('rankings', JSON.stringify(rankings));
-	return rankings.sort((a, b) => a.score - b.score);
+	return rankings.sort((a, b) => b.score - a.score);
 }
 
 function getFormattedDate() {
@@ -94,51 +98,24 @@ function getFormattedDate() {
 	})} ${d.getDay()}`;
 }
 
-function preloadImages() {
-	const foxImg = new Image(150, 150);
-	preloadedImages.push(foxImg);
-	fetchFoxImageUrl().then((v) => {
-		foxImg.src = v;
-		foxImg.onload = () => {
+async function preloadImages() {
+	preloadedImages.splice(0);
+	const allImages = Array.from({ length: MAX }, () => new Image(150, 150));
+	const allImageUrls: string[] = [];
+
+	await fetchFoxImageUrl().then((url) => {
+		allImageUrls.push(url);
+	});
+	await fetchDogImageUrls().then((url) => allImageUrls.push(...url));
+	await fetchCatImageUrls().then((url) => allImageUrls.push(...url));
+
+	allImages.forEach((img, idx) => {
+		img.src = allImageUrls[idx];
+		img.onload = () => {
 			++loaded;
 		};
-		foxImg.onclick = () => imageClick(1);
-	});
-
-	const catImages = [
-		new Image(150, 150),
-		new Image(150, 150),
-		new Image(150, 150),
-		new Image(150, 150),
-	];
-	fetchCatImages().then((v) => {
-		catImages.forEach((img, idx) => {
-			img.src = v[idx];
-			img.onload = () => {
-				++loaded;
-			};
-			img.onclick = () => imageClick(-1);
-			img.loading = 'eager';
-			addToPreloadedImages(img);
-		});
-	});
-
-	const dogImages = [
-		new Image(150, 150),
-		new Image(150, 150),
-		new Image(150, 150),
-		new Image(150, 150),
-	];
-	fetchDogImages().then((v) => {
-		dogImages.forEach((img, idx) => {
-			img.src = v[idx];
-			img.onload = () => {
-				++loaded;
-			};
-			img.onclick = () => imageClick(-1);
-			img.loading = 'eager';
-			addToPreloadedImages(img);
-		});
+		img.onclick = () => imageClick(idx === 0 ? 1 : -1);
+		addToPreloadedImages(img);
 	});
 }
 
@@ -156,7 +133,6 @@ function handleImageLoad() {
 function transferPreloadedImages() {
 	images.splice(0);
 	images.push(...preloadedImages);
-	preloadedImages.splice(0);
 }
 
 function imageClick(increment: 1 | -1) {
