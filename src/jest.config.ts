@@ -7,6 +7,7 @@ const config: Config = {
 	},
 	testRegex: '(/test/.*|(\\.|/)(test|spec))\\.(jsx|js|tsx|ts)$',
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+	testEnvironment: 'jest-environment-jsdom',
 };
 
 export default config;

@@ -8,13 +8,11 @@ module.exports = function (api) {
 				targets: {
 					browsers: ['defaults'],
 				},
-				useBuiltIns: 'entry',
 			},
 		],
 		'@babel/preset-flow',
 		'@babel/preset-typescript',
 	];
-
 	return {
 		presets,
 	};
