@@ -1,8 +1,19 @@
 {
-  "devDependencies": {
-    "ts-loader": "^9.5.4",
-    "typescript": "^5.9.2",
-    "webpack": "^5.101.3",
-    "webpack-cli": "^6.0.1"
-  }
+	"scripts": {
+		"watch": "npx webpack --watch",
+		"test": "jest"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.28.3",
+		"@babel/preset-env": "^7.28.3",
+		"@babel/preset-flow": "^7.27.1",
+		"@babel/preset-typescript": "^7.27.1",
+		"@types/jest": "^30.0.0",
+		"babel-jest": "^30.0.5",
+		"jest": "^30.0.5",
+		"ts-loader": "^9.5.4",
+		"typescript": "^5.9.2",
+		"webpack": "^5.101.3",
+		"webpack-cli": "^6.0.1"
+	}
 }

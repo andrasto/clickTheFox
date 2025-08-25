@@ -10,7 +10,7 @@ export const wait = (ms: number) =>
 export const getFormattedDate = (date: Date) => {
 	return `${date.getFullYear()}, ${date.toLocaleDateString('en', {
 		month: 'short',
-	})} ${date.getDay()}`;
+	})} ${date.getDate()}`;
 };
 
 export const modifyElementVisibility = (
