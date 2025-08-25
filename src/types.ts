@@ -14,3 +14,9 @@ export type DogsResponse = {
 	message: string[];
 	status: string;
 };
+
+export type PlayerStats = {
+	name: string;
+	date: string;
+	score: number;
+};

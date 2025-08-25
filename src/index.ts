@@ -1,11 +1,12 @@
 import { fetchCatImages, fetchFoxImageUrl, fetchDogImages } from './requests';
+import { PlayerStats } from './types';
 
 const playerNameInput = <HTMLInputElement>getById('playerName');
 const playButton = <HTMLButtonElement>getById('playButton');
 const MAX = 9;
 let loaded = 0;
 let playerScore = 0;
-let timeLeft = 30;
+let timeLeft = 5;
 let timer;
 
 const images = [];
@@ -16,23 +17,82 @@ playerNameInput.addEventListener('blur', onPlayerNameChange);
 getById('helloPlayerName').addEventListener('click', onPlayerNameClick);
 preloadImages();
 
-playButton.onclick = () => {
+playButton.onclick = startGame;
+
+function startGame() {
 	getById('helloSection').classList.remove('show');
 	getById('inputSection').classList.remove('show');
+	getById('scoreboard').classList.remove('show');
 	getById('gameScreen').classList.add('show');
 	playerScore = 0;
-	timeLeft = 30;
+	timeLeft = 5;
 	handleImageLoad();
 	preloadImages();
+	getById('playerScore').innerText = playerScore.toString();
 	getById('timeLeft').innerText = timeLeft.toString();
 	timer = setInterval(() => {
 		timeLeft -= 1;
 		getById('timeLeft').innerText = timeLeft.toString();
 		if (timeLeft === 0) {
 			clearInterval(timer);
+			endGame();
 		}
 	}, 1000);
-};
+}
+
+function endGame() {
+	getById('helloSection').classList.remove('show');
+	getById('inputSection').classList.remove('show');
+	getById('gameScreen').classList.remove('show');
+	getById('scoreboard').classList.add('show');
+	const playerStats = {
+		name: playerNameInput.value,
+		date: getFormattedDate(),
+		score: playerScore,
+	};
+	const rankings = getRankings(playerStats);
+	renderRankings(rankings);
+}
+
+function renderRankings(rankings: PlayerStats[]) {
+	const scoreboard = getById('scoreboardBody');
+	scoreboard.replaceChildren();
+
+	const rowsToInsert = rankings
+		.map((r, idx) => {
+			return `
+				<tr>
+					<td>${idx + 1}</td>
+					<td>${r.name}</td>
+					<td>${r.date}</td>
+					<td>${r.score}</td>
+				</tr>`;
+		})
+		.join('');
+	scoreboard.innerHTML = rowsToInsert;
+}
+
+function getRankings(currentPlayerStats: PlayerStats) {
+	const rankings = <PlayerStats[] | null>(
+		JSON.parse(localStorage.getItem('rankings'))
+	);
+
+	if (!rankings) {
+		localStorage.setItem('rankings', JSON.stringify([currentPlayerStats]));
+		return [currentPlayerStats];
+	}
+
+	rankings.push(currentPlayerStats);
+	localStorage.setItem('rankings', JSON.stringify(rankings));
+	return rankings.sort((a, b) => a.score - b.score);
+}
+
+function getFormattedDate() {
+	const d = new Date();
+	return `${d.getFullYear()}, ${d.toLocaleDateString('en', {
+		month: 'short',
+	})} ${d.getDay()}`;
+}
 
 function preloadImages() {
 	const foxImg = new Image(150, 150);
@@ -83,8 +143,6 @@ function preloadImages() {
 }
 
 function handleImageLoad() {
-	console.log('should load');
-
 	const gameBox = getById('gameBox');
 	transferPreloadedImages();
 	gameBox.replaceChildren();
@@ -126,6 +184,7 @@ function onPlayerNameChange() {
 		getById('helloSection').classList.add('show');
 		getById('inputSection').classList.remove('show');
 		getById('gameScreen').classList.remove('show');
+		getById('scoreboard').classList.remove('show');
 	} else {
 		playButton.disabled = true;
 	}
@@ -135,6 +194,7 @@ function onPlayerNameClick() {
 	getById('inputSection').classList.add('show');
 	getById('helloSection').classList.remove('show');
 	getById('gameScreen').classList.remove('show');
+	getById('scoreboard').classList.remove('show');
 }
 
 function getById(id: string) {

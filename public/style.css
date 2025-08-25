@@ -1,12 +1,14 @@
 #helloSection,
 #inputSection,
-#gameScreen {
+#gameScreen,
+#scoreboard {
 	display: none;
 }
 
 #helloSection.show,
 #inputSection.show,
-#gameScreen.show {
+#gameScreen.show,
+#scoreboard.show {
 	display: block;
 }
 
