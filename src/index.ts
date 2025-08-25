@@ -1,3 +1,4 @@
+import { TIMER_IN_SEC } from './configs';
 import {
 	fetchCatImageUrls,
 	fetchFoxImageUrl,
@@ -7,11 +8,13 @@ import { PlayerStats } from './types';
 
 const playerNameInput = <HTMLInputElement>getById('playerName');
 const playButton = <HTMLButtonElement>getById('playButton');
+const gameBox = getById('gameBox');
 const MAX = 9;
-let loaded = 0;
 let playerScore = 0;
-let timeLeft = 5;
+let timeLeft = TIMER_IN_SEC;
 let timer: NodeJS.Timeout;
+let imagesLoading = false;
+let canClick = false;
 
 const images = [];
 const preloadedImages = [];
@@ -28,8 +31,10 @@ function startGame() {
 	getById('inputSection').classList.remove('show');
 	getById('scoreboard').classList.remove('show');
 	getById('gameScreen').classList.add('show');
+	canClick = true;
 	playerScore = 0;
-	timeLeft = 5;
+	timeLeft = TIMER_IN_SEC;
+	loaderTransition();
 	handleImageLoad();
 	preloadImages();
 	getById('playerScore').innerText = playerScore.toString();
@@ -99,6 +104,11 @@ function getFormattedDate() {
 }
 
 async function preloadImages() {
+	while (imagesLoading) {
+		await wait(100);
+	}
+
+	imagesLoading = true;
 	preloadedImages.splice(0);
 	const allImages = Array.from({ length: MAX }, () => new Image(150, 150));
 	const allImageUrls: string[] = [];
@@ -106,28 +116,39 @@ async function preloadImages() {
 	await fetchFoxImageUrl().then((url) => {
 		allImageUrls.push(url);
 	});
-	await fetchDogImageUrls().then((url) => allImageUrls.push(...url));
-	await fetchCatImageUrls().then((url) => allImageUrls.push(...url));
+	await fetchDogImageUrls().then((urls) => allImageUrls.push(...urls));
+	await fetchCatImageUrls().then((urls) => allImageUrls.push(...urls));
 
-	allImages.forEach((img, idx) => {
+	const load = allImages.map((img, idx): Promise<HTMLImageElement> => {
 		img.src = allImageUrls[idx];
-		img.onload = () => {
-			++loaded;
-		};
 		img.onclick = () => imageClick(idx === 0 ? 1 : -1);
 		addToPreloadedImages(img);
+		return new Promise((res) => {
+			img.onload = () => res(img);
+		});
 	});
+
+	const loadedImages = await Promise.all(load);
+	loadedImages.forEach((img) => addToPreloadedImages(img));
+	imagesLoading = false;
 }
 
-function handleImageLoad() {
-	const gameBox = getById('gameBox');
+async function handleImageLoad() {
+	while (imagesLoading) {
+		await wait(100);
+	}
 	transferPreloadedImages();
-	gameBox.replaceChildren();
+	getById('loader').classList.remove('show');
 	images.forEach((img) => {
 		img.ondragstart = () => false;
 		gameBox.appendChild(img);
 	});
-	loaded = 0;
+	canClick = true;
+}
+
+function loaderTransition() {
+	gameBox.replaceChildren();
+	getById('loader').classList.add('show');
 }
 
 function transferPreloadedImages() {
@@ -136,13 +157,17 @@ function transferPreloadedImages() {
 }
 
 function imageClick(increment: 1 | -1) {
-	playerScore += increment;
-	getById('playerScore').innerText = playerScore.toString();
-	handleImageLoad();
-	preloadImages();
+	if (canClick) {
+		loaderTransition();
+		canClick = false;
+		playerScore += increment;
+		getById('playerScore').innerText = playerScore.toString();
+		handleImageLoad();
+		preloadImages();
+	}
 }
 
-function addToPreloadedImages(img) {
+function addToPreloadedImages(img: HTMLImageElement) {
 	const random = Math.floor(Math.random() * 100);
 	if (random < 50) {
 		preloadedImages.unshift(img);
@@ -175,4 +200,10 @@ function onPlayerNameClick() {
 
 function getById(id: string) {
 	return document.getElementById(id);
+}
+
+function wait(ms: number) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, ms);
+	});
 }

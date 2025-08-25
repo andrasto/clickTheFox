@@ -1,13 +1,15 @@
 #helloSection,
 #inputSection,
 #gameScreen,
-#scoreboard {
+#scoreboard,
+#loader {
 	display: none;
 }
 
 #helloSection.show,
 #inputSection.show,
 #gameScreen.show,
+#loader.show,
 #scoreboard.show {
 	display: block;
 }
@@ -26,4 +28,13 @@
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
+}
+
+#gameboxWrapper {
+	position: relative;
+}
+
+#loader {
+	position: absolute;
+	top: 0;
 }
