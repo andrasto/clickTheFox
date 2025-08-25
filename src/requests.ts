@@ -10,6 +10,8 @@ export async function fetchFoxImageUrl() {
 export async function fetchCatImageUrls() {
 	const res = await fetch(URLS.cats);
 	const data: CatsResponse = await res.json();
+	// The endpoint doesn't support the limit query param, even though it's in their documentation
+	data.splice(4);
 	return data.map((img) => img.url);
 }
 

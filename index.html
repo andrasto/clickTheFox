@@ -7,55 +7,54 @@
 		<title>Click the Fox! Game</title>
 	</head>
 	<body>
-		<h1>Click the Fox! Game</h1>
-		<div id="startScreen">
-			<div id="inputSection" class="show">
-				<span>Name: </span>
-				<input id="playerName" name="name" type="text" />
-			</div>
-			<div id="helloSection">
-				<span>Hello </span>
-				<span id="helloPlayerName"></span>
-			</div>
-			<div>
-				<button type="submit" id="playButton" disabled>Play!</button>
-			</div>
-		</div>
-		<div id="gameScreen">
-			<div id="gameHeader">
-				<div id="scoreSection">
-					<span>Score: </span>
-					<span id="playerScore">0</span>
+		<div id="contentWrapper">
+			<h1>Click the Fox! Game</h1>
+			<div id="startScreen">
+				<div id="inputSection" class="show">
+					<span>Name: </span>
+					<input id="playerName" type="text" />
 				</div>
-				<div id="timerSection">
-					<span>Time left: </span>
-					<span id="timeLeft"></span>
+				<div id="helloSection">
+					<span>Hello </span>
+					<span id="helloPlayerName"></span>
 				</div>
 			</div>
-			<div id="gameboxWrapper">
-				<div id="gameBox"></div>
-				<div id="loader">
-					<img src="public/spinner.gif" />
+			<div id="gameScreen">
+				<div id="gameHeader">
+					<div id="scoreSection">
+						<span>Score: </span>
+						<span id="playerScore">0</span>
+					</div>
+					<div id="timerSection">
+						<span>Time left: </span>
+						<span id="timeLeft"></span>
+					</div>
+				</div>
+				<div id="gameboxWrapper">
+					<div id="gameBox"></div>
+					<div id="loader">
+						<img src="public/spinner.gif" />
+					</div>
 				</div>
 			</div>
-		</div>
-		<div id="scoreboard">
-			<h2>SCOREBOARD</h2>
-			<table>
-				<thead>
-					<tr>
-						<th>Rank</th>
-						<th>Name</th>
-						<th>Date</th>
-						<th>Score</th>
-					</tr>
-				</thead>
-				<tbody id="scoreboardBody"></tbody>
-			</table>
-			<div footerActions>
+			<div id="scoreboard">
+				<h2>SCOREBOARD</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Rank</th>
+							<th>Name</th>
+							<th>Date</th>
+							<th>Score</th>
+						</tr>
+					</thead>
+					<tbody id="scoreboardBody"></tbody>
+				</table>
+			</div>
+			<footer id="footerActions">
 				<button id="toWelcomeScreen">To Welcome Screen</button>
-				<button id="playAgain">PLAY!</button>
-			</div>
+				<button class="show" id="playButton" disabled>PLAY!</button>
+			</footer>
 		</div>
 	</body>
 	<script src="dist/index.js" type="module"></script>
