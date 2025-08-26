@@ -21,8 +21,8 @@ export type PlayerStats = {
 	score: number;
 };
 
-export interface FetchApis {
+export type FetchApis = {
 	cat: () => Promise<string[]>;
 	dog: () => Promise<string[]>;
 	fox: () => Promise<string>;
-}
+};

@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "CommonJS",
+    "target": "esnext",
+    "module": "esnext",
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "typeRoots": ["node_modules/@types"]
   }
 }

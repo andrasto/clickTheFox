@@ -1,12 +1,14 @@
 import { TIMER_IN_SEC } from './configs';
-import { FetchApis, PlayerStats } from './types';
 import {
-	getById,
-	getFormattedDate,
-	getRankings,
-	modifyElementVisibility,
-	wait,
-} from './utils';
+	showGameScreen,
+	showLoader,
+	showNameInputScreen,
+	showScoreboard,
+	showWelcomeScreen,
+} from './navigations';
+import { getRankings, renderRankings } from './rankings';
+import { FetchApis } from './types';
+import { getById, getFormattedDate, wait } from './utils';
 
 export class ClickTheFox {
 	public constructor(fetchApis: FetchApis) {
@@ -30,28 +32,19 @@ export class ClickTheFox {
 		this.preloadImages();
 		this.playButton.onclick = this.startGame;
 		this.playerNameInput.onblur = this.onPlayerNameChange;
-		getById('helloPlayerName').onclick = this.onPlayerNameClick;
-		getById('toWelcomeScreen').onclick = this.toWelcomeScreen;
+		getById('helloPlayerName').onclick = showNameInputScreen;
+		getById('toWelcomeScreen').onclick = showWelcomeScreen;
 	};
 
 	private startGame = () => {
-		modifyElementVisibility(
-			[getById('gameScreen')],
-			[
-				getById('helloSection'),
-				getById('scoreboard'),
-				getById('toWelcomeScreen'),
-				this.playButton,
-			]
-		);
-		getById('footerActions').classList.remove('spaceBetween');
+		showGameScreen();
 
 		this.resetState();
-		this.loaderTransition();
+		showLoader();
 		this.handleImageLoad();
 		this.preloadImages();
 
-		this.setTimer();
+		this.setGameTimer();
 	};
 
 	private resetState = () => {
@@ -62,7 +55,7 @@ export class ClickTheFox {
 		getById('timeLeft').innerText = this.timeLeft.toString();
 	};
 
-	private setTimer = () => {
+	private setGameTimer = () => {
 		this.timer = setInterval(() => {
 			this.timeLeft -= 1;
 			getById('timeLeft').innerText = this.timeLeft.toString();
@@ -74,48 +67,14 @@ export class ClickTheFox {
 	};
 
 	private endGame = () => {
-		modifyElementVisibility(
-			[
-				getById('scoreboard'),
-				this.playButton,
-				getById('toWelcomeScreen'),
-			],
-			[getById('gameScreen')]
-		);
-		getById('footerActions').classList.add('spaceBetween');
+		showScoreboard();
 		const playerStats = {
 			name: this.playerNameInput.value,
 			date: getFormattedDate(new Date()),
 			score: this.playerScore,
 		};
 		const rankings = getRankings(playerStats);
-		this.renderRankings(rankings);
-	};
-
-	private toWelcomeScreen = () => {
-		modifyElementVisibility(
-			[getById('helloSection')],
-			[getById('scoreboard'), getById('toWelcomeScreen')]
-		);
-		getById('footerActions').classList.remove('spaceBetween');
-	};
-
-	private renderRankings = (rankings: PlayerStats[]) => {
-		const scoreboard = getById('scoreboardBody');
-		scoreboard.replaceChildren();
-
-		const rowsToInsert = rankings
-			.map((r, idx) => {
-				return `
-          <tr>
-            <td>${idx + 1}</td>
-            <td>${r.name}</td>
-            <td>${r.date}</td>
-            <td>${r.score}</td>
-          </tr>`;
-			})
-			.join('');
-		scoreboard.innerHTML = rowsToInsert;
+		renderRankings(rankings);
 	};
 
 	private preloadImages = async () => {
@@ -160,11 +119,6 @@ export class ClickTheFox {
 		this.canClick = true;
 	};
 
-	private loaderTransition = () => {
-		getById('gameBox').replaceChildren();
-		getById('loader').classList.add('show');
-	};
-
 	private transferPreloadedImages = () => {
 		this.imagesToRender.splice(0);
 		this.imagesToRender.push(...this.preloadedImages);
@@ -172,7 +126,7 @@ export class ClickTheFox {
 
 	private imageClick = (increment: 1 | -1) => {
 		if (this.canClick) {
-			this.loaderTransition();
+			showLoader();
 			this.canClick = false;
 			this.playerScore += increment;
 			getById('playerScore').innerText = this.playerScore.toString();
@@ -196,19 +150,9 @@ export class ClickTheFox {
 		if (playerName) {
 			this.playButton.disabled = false;
 			getById('helloPlayerName').innerText = playerName;
-			modifyElementVisibility(
-				[getById('helloSection')],
-				[getById('inputSection')]
-			);
+			showWelcomeScreen();
 		} else {
 			this.playButton.disabled = true;
 		}
-	};
-
-	private onPlayerNameClick = () => {
-		modifyElementVisibility(
-			[getById('inputSection')],
-			[getById('helloSection')]
-		);
 	};
 }
