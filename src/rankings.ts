@@ -2,20 +2,31 @@ import { PlayerStats } from './types';
 import { getById } from './utils';
 
 export const getRankings = (currentPlayerStats: PlayerStats) => {
-	const rankings = <PlayerStats[] | null>(
-		JSON.parse(localStorage.getItem('rankings'))
-	);
+	try {
+		const rankings = <PlayerStats[] | null>(
+			JSON.parse(localStorage.getItem('rankings'))
+		);
 
-	if (!rankings) {
-		localStorage.setItem('rankings', JSON.stringify([currentPlayerStats]));
+		if (!rankings) {
+			localStorage.setItem(
+				'rankings',
+				JSON.stringify([currentPlayerStats])
+			);
+			return [currentPlayerStats];
+		}
+
+		rankings.push(currentPlayerStats);
+		const sorted = rankings.sort((a, b) => b.score - a.score);
+		sorted.splice(7);
+		localStorage.setItem('rankings', JSON.stringify(sorted));
+		return sorted;
+	} catch (err) {
+		console.log(
+			'Something went wrong while getting the rankings, returning fallback data',
+			err
+		);
 		return [currentPlayerStats];
 	}
-
-	rankings.push(currentPlayerStats);
-	const sorted = rankings.sort((a, b) => b.score - a.score);
-	sorted.splice(7);
-	localStorage.setItem('rankings', JSON.stringify(sorted));
-	return sorted;
 };
 
 export const renderRankings = (rankings: PlayerStats[]) => {
