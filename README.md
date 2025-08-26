@@ -17,7 +17,7 @@ npm run build
 #### For development, there's also watch mode:
 
 ```
-npm  run watch
+npm run watch
 ```
 
 #### After the dependencies are installed and the app is built, open the `index.html` from the `dist` folder in a browser to play
