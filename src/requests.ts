@@ -14,7 +14,7 @@ export async function fetchFoxImageUrl() {
 			'An error occoured during fetching the fox image url, fallback url will be used',
 			err
 		);
-		return 'src/assets/fox-fallback.jpg';
+		return 'assets/fox-fallback.jpg';
 	}
 }
 
@@ -33,7 +33,7 @@ export async function fetchCatImageUrls() {
 			'An error occoured during fetching cat image urls, fallback url will be used',
 			err
 		);
-		return new Array<string>(4).fill('src/assets/cat-fallback.jpg');
+		return new Array<string>(4).fill('assets/cat-fallback.jpg');
 	}
 }
 
@@ -50,6 +50,6 @@ export async function fetchDogImageUrls() {
 			'An error occoured during fetching dog image urls, fallback url will be used',
 			err
 		);
-		return new Array<string>(4).fill('src/assets/dog-fallback.jpg');
+		return new Array<string>(4).fill('assets/dog-fallback.jpg');
 	}
 }

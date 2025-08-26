@@ -1,5 +1,6 @@
 {
 	"scripts": {
+		"build": "npx webpack",
 		"watch": "npx webpack --watch",
 		"test": "jest"
 	},
@@ -10,6 +11,7 @@
 		"@babel/preset-typescript": "^7.27.1",
 		"@types/jest": "^30.0.0",
 		"babel-jest": "^30.0.5",
+		"copy-webpack-plugin": "^13.0.1",
 		"jest": "^30.0.5",
 		"jest-environment-jsdom": "^30.0.5",
 		"ts-loader": "^9.5.4",

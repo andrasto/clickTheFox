@@ -30,7 +30,7 @@ describe('Api calls', () => {
 			});
 
 			const res = await fetchFoxImageUrl();
-			expect(res).toBe('src/assets/fox-fallback.jpg');
+			expect(res).toBe('assets/fox-fallback.jpg');
 			expect(fetchMock).toHaveBeenCalledWith(
 				'https://randomfox.ca/floof/'
 			);
@@ -66,10 +66,10 @@ describe('Api calls', () => {
 
 			const res = await fetchDogImageUrls();
 			expect(res).toStrictEqual([
-				'src/assets/dog-fallback.jpg',
-				'src/assets/dog-fallback.jpg',
-				'src/assets/dog-fallback.jpg',
-				'src/assets/dog-fallback.jpg',
+				'assets/dog-fallback.jpg',
+				'assets/dog-fallback.jpg',
+				'assets/dog-fallback.jpg',
+				'assets/dog-fallback.jpg',
 			]);
 			expect(fetchMock).toHaveBeenCalledWith(
 				'https://dog.ceo/api/breeds/image/random/4'
@@ -106,10 +106,10 @@ describe('Api calls', () => {
 
 			const res = await fetchCatImageUrls();
 			expect(res).toStrictEqual([
-				'src/assets/cat-fallback.jpg',
-				'src/assets/cat-fallback.jpg',
-				'src/assets/cat-fallback.jpg',
-				'src/assets/cat-fallback.jpg',
+				'assets/cat-fallback.jpg',
+				'assets/cat-fallback.jpg',
+				'assets/cat-fallback.jpg',
+				'assets/cat-fallback.jpg',
 			]);
 			expect(fetchMock).toHaveBeenCalledWith(
 				'https://api.thecatapi.com/v1/images/search?limit=4&size=small&mime_types=jpg'
