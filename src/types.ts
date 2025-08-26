@@ -26,3 +26,8 @@ export type FetchApis = {
 	dog: () => Promise<string[]>;
 	fox: () => Promise<string>;
 };
+
+export type FetchMock<T> = {
+	ok: boolean;
+	json: () => Promise<T>;
+};

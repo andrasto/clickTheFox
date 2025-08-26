@@ -2,21 +2,54 @@ import { URLS } from './configs';
 import { CatsResponse, DogsResponse, FoxResponse } from './types';
 
 export async function fetchFoxImageUrl() {
-	const res = await fetch(URLS.fox);
-	const data: FoxResponse = await res.json();
-	return data.image;
+	try {
+		const res = await fetch(URLS.fox);
+		if (!res.ok) {
+			throw new Error(`Response status: ${res.status}`);
+		}
+		const data: FoxResponse = await res.json();
+		return data.image;
+	} catch (err) {
+		console.log(
+			'An error occoured during fetching the fox image url, fallback url will be used',
+			err
+		);
+		return 'src/assets/fox-fallback.jpg';
+	}
 }
 
 export async function fetchCatImageUrls() {
-	const res = await fetch(URLS.cats);
-	const data: CatsResponse = await res.json();
-	// The endpoint doesn't support the limit query param, even though it's in their documentation
-	data.splice(4);
-	return data.map((img) => img.url);
+	try {
+		const res = await fetch(URLS.cats);
+		if (!res.ok) {
+			throw new Error(`Response status: ${res.status}`);
+		}
+		const data: CatsResponse = await res.json();
+		// The endpoint doesn't support the limit query param, even though it's in their documentation
+		data.splice(4);
+		return data.map((img) => img.url);
+	} catch (err) {
+		console.log(
+			'An error occoured during fetching cat image urls, fallback url will be used',
+			err
+		);
+		return new Array<string>(4).fill('src/assets/cat-fallback.jpg');
+	}
 }
 
 export async function fetchDogImageUrls() {
-	const res = await fetch(URLS.dogs);
-	const data: DogsResponse = await res.json();
-	return data.message;
+	try {
+		const res = await fetch(URLS.dogs);
+		if (!res.ok) {
+			throw new Error(`Response status: ${res.status}`);
+		}
+		const data: DogsResponse = await res.json();
+		return data.message;
+	} catch (err) {
+		console.log(
+			'An error occoured during fetching dog image urls, fallback url will be used',
+			err
+		);
+		return new Array<string>(4).fill('src/assets/dog-fallback.jpg');
+	}
 }
