@@ -8,7 +8,7 @@ import {
 } from './navigations';
 import { getRankings, renderRankings } from './rankings';
 import { FetchApis } from './types';
-import { getById, getFormattedDate, wait } from './utils';
+import { getById, getFormattedDate, shuffleArray, wait } from './utils';
 
 export class ClickTheFox {
 	public constructor(fetchApis: FetchApis) {
@@ -102,7 +102,7 @@ export class ClickTheFox {
 		});
 
 		const loadedImages = await Promise.all(load);
-		loadedImages.forEach((img) => this.addToPreloadedImages(img));
+		this.preloadedImages.push(...shuffleArray(loadedImages));
 		this.imagesLoading = false;
 	};
 
@@ -132,15 +132,6 @@ export class ClickTheFox {
 			getById('playerScore').innerText = this.playerScore.toString();
 			this.handleImageLoad();
 			this.preloadImages();
-		}
-	};
-
-	private addToPreloadedImages = (img: HTMLImageElement) => {
-		const random = Math.floor(Math.random() * 100);
-		if (random < 50) {
-			this.preloadedImages.unshift(img);
-		} else {
-			this.preloadedImages.push(img);
 		}
 	};
 

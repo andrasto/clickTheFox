@@ -13,8 +13,13 @@ export const wait = (ms: number) =>
 		setTimeout(resolve, ms);
 	});
 
-export const getFormattedDate = (date: Date) => {
-	return `${date.getFullYear()}, ${date.toLocaleDateString('en', {
+export const getFormattedDate = (date: Date) =>
+	`${date.getFullYear()}, ${date.toLocaleDateString('en', {
 		month: 'short',
 	})} ${date.getDate()}`;
-};
+
+export const shuffleArray = <T>(arr: T[]) =>
+	arr
+		.map((value) => ({ value, sort: Math.random() }))
+		.sort((a, b) => a.sort - b.sort)
+		.map(({ value }) => value);
